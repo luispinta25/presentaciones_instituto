@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Ticket de Impresión</title>
+    <style>
+        /* Estilos para que solo el contenido principal se imprima */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #seccion-imprimible, #seccion-imprimible * {
+                visibility: visible;
+            }
+            #seccion-imprimible {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body onafterprint="window.close()">
+
+    <h1>Ticket de Compra</h1>
+    <div id="seccion-imprimible">
+        <p><strong>Producto:</strong> Producto de Ejemplo</p>
+        <p><strong>Precio:</strong> $10.00</p>
+        <p><strong>Fecha:</strong> 05/08/2025</p>
+        <hr>
+        <p>¡Gracias por su compra!</p>
+    </div>
+
+    <script type="text/javascript">
+        // Llama a la función de impresión tan pronto como la página carga.
+        window.onload = function() {
+            window.print();
+        }
+    </script>
+
+</body>
+</html>
