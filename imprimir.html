@@ -2,24 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Ticket de Impresión</title>
-    <style>
-        /* Estilos para que solo el contenido principal se imprima */
-        @media print {
-            body * {
-                visibility: hidden;
-            }
-            #seccion-imprimible, #seccion-imprimible * {
-                visibility: visible;
-            }
-            #seccion-imprimible {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-            }
-        }
-    </style>
+    <title>Imprimiendo Documento...</title>
 </head>
 <body onafterprint="window.close()">
 
@@ -33,10 +16,10 @@
     </div>
 
     <script type="text/javascript">
-        // Llama a la función de impresión tan pronto como la página carga.
+        // Imprimir inmediatamente al cargar
         window.onload = function() {
             window.print();
-        }
+        };
     </script>
 
 </body>
