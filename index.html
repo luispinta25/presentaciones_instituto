@@ -1,32 +1,1104 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Luis Pinta - Presentaciones</title>
+    <title>Análisis Presupuestario: Banco del Pacífico</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Space+Grotesk:wght@300;500;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        /* Elimina márgenes y padding por defecto del navegador */
-        html, body {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            overflow: hidden; /* Evita que aparezcan barras de scroll en el cuerpo */
+        /* 1. SETUP & RESET */
+        :root {
+            --primary: #00A9E0;
+            --secondary: #002E5D;
+            --accent: #FF4081;
+            --bg-dark: #0f172a;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-light: #f8fafc;
+            --text-dim: #94a3b8;
+            --income-color: #3b82f6;
+            /* Blue for Income */
+            --expense-color: #ef4444;
+            /* Red for Expenses */
         }
-        /* Configura el iframe para que llene el espacio */
-        iframe {
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image:
+                radial-gradient(circle at 10% 20%, rgba(0, 169, 224, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(255, 64, 129, 0.1) 0%, transparent 40%);
+            margin: 0;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            font-family: 'Outfit', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-light);
+        }
+
+        /* 2. PRESENTATION DECK */
+        #deck {
+            position: relative;
+            width: 1280px;
+            height: 720px;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+
+        /* 3. SLIDE CONTAINER */
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            border: none; /* Elimina el borde por defecto */
+            padding: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(1.1) perspective(1000px) rotateX(5deg);
+            transform-origin: center bottom;
+            transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+            z-index: 1;
+        }
+
+        .slide.active {
+            opacity: 1;
+            pointer-events: all;
+            transform: scale(1) perspective(1000px) rotateX(0deg);
+            z-index: 10;
+        }
+
+        .slide.exit {
+            opacity: 0;
+            transform: scale(0.9) perspective(1000px) rotateX(-5deg);
+        }
+
+        /* 4. TYPOGRAPHY & ANIMATIONS */
+        h1,
+        h2,
+        h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            margin: 0;
+            line-height: 1.1;
+        }
+
+        h1 {
+            font-size: 72px;
+            background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+
+        .slide-title {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 50px;
+            padding-left: 20px;
+            border-left: 6px solid var(--primary);
+            color: white;
+            text-shadow: 0 0 20px rgba(0, 169, 224, 0.3);
+        }
+
+        p,
+        li,
+        td,
+        th {
+            color: var(--text-dim);
+            font-size: 20px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        strong {
+            color: white;
+        }
+
+        /* Staggered Entrance Animations */
+        .slide.active h1,
+        .slide.active .slide-title,
+        .slide.active p,
+        .slide.active li,
+        .slide.active .tile,
+        .slide.active img,
+        .slide.active .chart-container,
+        .slide.active .image-wrapper {
+            animation: slideInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .slide.active .slide-title {
+            animation-delay: 0.1s;
+        }
+
+        .slide.active .content-area {
+            animation-delay: 0.2s;
+        }
+
+        .slide.active .tile:nth-child(1) {
+            animation-delay: 0.2s;
+        }
+
+        .slide.active .tile:nth-child(2) {
+            animation-delay: 0.3s;
+        }
+
+        .slide.active .tile:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        .slide.active .tile:nth-child(4) {
+            animation-delay: 0.5s;
+        }
+
+        @keyframes slideInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* CUSTOM ICON ANIMATIONS */
+        @keyframes blink {
+
+            0%,
+            45%,
+            55%,
+            100% {
+                transform: scaleY(1);
+            }
+
+            50% {
+                transform: scaleY(0.1);
+            }
+        }
+
+        .anim-blink {
+            animation: blink 3s infinite;
+        }
+
+        @keyframes pulse-scale {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        .anim-pulse {
+            animation: pulse-scale 2s infinite ease-in-out;
+        }
+
+        @keyframes float-y {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+
+        .anim-float {
+            animation: float-y 3s infinite ease-in-out;
+        }
+
+        @keyframes shake-tilt {
+
+            0%,
+            100% {
+                transform: rotate(0deg);
+            }
+
+            25% {
+                transform: rotate(-10deg);
+            }
+
+            75% {
+                transform: rotate(10deg);
+            }
+        }
+
+        .anim-shake {
+            animation: shake-tilt 2.5s infinite ease-in-out;
+        }
+
+        @keyframes spin-slow {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .anim-spin {
+            animation: spin-slow 8s linear infinite;
+        }
+
+        @keyframes chart-bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-5px) scaleY(1.1);
+            }
+        }
+
+        .anim-chart {
+            animation: chart-bounce 2s infinite ease-in-out;
+        }
+
+        /* 5. LAYOUTS & COMPONENTS */
+        .title-slide {
+            text-align: center;
+            background: radial-gradient(circle at center, rgba(0, 46, 93, 0.4) 0%, transparent 70%);
+        }
+
+        .title-slide .subtitle {
+            color: var(--primary);
+            font-size: 28px;
+            font-weight: 300;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+            height: 100%;
+        }
+
+        .image-wrapper {
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            height: 400px;
+            border: 1px solid var(--glass-border);
+            position: relative;
+        }
+
+        .image-wrapper::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, transparent 0%, rgba(15, 23, 42, 0.5) 100%);
+        }
+
+        .image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 5s ease;
+        }
+
+        .slide.active .image-wrapper img {
+            transform: scale(1.1);
+        }
+
+        /* Glass Tiles */
+        .tiled-content {
+            display: flex;
+            gap: 30px;
+        }
+
+        .tile {
+            flex: 1;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .tile:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .tile .icon {
+            font-size: 40px;
+            color: var(--primary);
+            margin-bottom: 20px;
+            text-shadow: 0 0 15px var(--primary);
+            display: inline-block;
+            /* Required for transform animations */
+        }
+
+        .tile h3 {
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        /* Charts */
+        .bar {
+            display: grid;
+            grid-template-columns: 220px 1fr 140px;
+            /* Label | Bar | Value */
+            gap: 20px;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .bar .label {
+            text-align: right;
+            font-weight: 600;
+            color: var(--text-light);
+            font-size: 18px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .bar-inner {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            height: 40px;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+            position: relative;
+        }
+
+        .bar-fill {
+            height: 100%;
+            width: 0;
+            transition: width 1.5s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .bar-fill.income {
+            background: linear-gradient(90deg, var(--income-color), #60a5fa);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+        }
+
+        .bar-fill.expense {
+            background: linear-gradient(90deg, var(--expense-color), #f87171);
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+        }
+
+        .slide.active .bar-fill {
+            width: var(--target-width);
+        }
+
+        .bar .value {
+            font-family: 'Space Grotesk', monospace;
+            font-size: 20px;
+            font-weight: 700;
+            text-align: center;
+            color: #fff;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 8px 0;
+            border-radius: 8px;
+            border: 1px solid var(--glass-border);
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+            letter-spacing: 1px;
+        }
+
+        /* Balance Table */
+        .balance-table {
+            width: 70%;
+            border-collapse: separate;
+            border-spacing: 0 15px;
+            font-size: 24px;
+        }
+
+        .balance-table tr {
+            background: var(--glass-bg);
+            backdrop-filter: blur(5px);
+            transition: transform 0.3s;
+        }
+
+        .balance-table tr:hover {
+            transform: scale(1.02);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .balance-table td {
+            padding: 20px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .balance-table td:first-child {
+            border-radius: 12px 0 0 12px;
+            border-right: none;
+        }
+
+        .balance-table td:last-child {
+            border-radius: 0 12px 12px 0;
+            border-left: none;
+            text-align: right;
+            font-family: 'Space Grotesk';
+            font-weight: 700;
+        }
+
+        .highlight-number {
+            text-align: center;
+            margin-top: 30px;
+            padding: 30px;
+            background: radial-gradient(circle, rgba(0, 169, 224, 0.1) 0%, transparent 70%);
+            border-radius: 30px;
+        }
+
+        .highlight-number .val {
+            font-size: 100px;
+            font-weight: 800;
+            background: linear-gradient(to right, #4ade80, #22c55e);
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-family: 'Space Grotesk';
+            text-shadow: 0 10px 30px rgba(34, 197, 94, 0.3);
+        }
+
+        .highlight-number .lbl {
+            font-size: 24px;
+            color: var(--text-light);
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* 6. CONTROLS */
+        .nav-arrow {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 60px;
+            cursor: pointer;
+            z-index: 100;
+            transition: all 0.3s;
+            animation: glow-blink 3s infinite;
+        }
+
+        .nav-arrow:hover {
+            color: var(--primary);
+            transform: translateY(-50%) scale(1.2);
+        }
+
+        .nav-prev {
+            left: 40px;
+        }
+
+        .nav-next {
+            right: 40px;
+        }
+
+        /* CLICK ANIMATION */
+        .nav-arrow.clicked {
+            animation: click-flash 0.4s ease-out forwards;
+        }
+
+        @keyframes glow-blink {
+
+            0%,
+            100% {
+                text-shadow: 0 0 10px rgba(0, 169, 224, 0);
+                opacity: 0.3;
+            }
+
+            50% {
+                text-shadow: 0 0 30px rgba(0, 169, 224, 0.8);
+                opacity: 1;
+            }
+        }
+
+        @keyframes click-flash {
+            0% {
+                transform: translateY(-50%) scale(1.2);
+                text-shadow: 0 0 20px var(--primary);
+                color: white;
+                opacity: 1;
+            }
+
+            50% {
+                transform: translateY(-50%) scale(1.5);
+                text-shadow: 0 0 60px white;
+                color: #fff;
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-50%) scale(1.2);
+                text-shadow: 0 0 20px var(--primary);
+                color: var(--primary);
+                opacity: 1;
+            }
+        }
+
+        .progress-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 6px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            width: 0%;
+            transition: width 0.5s ease;
+            z-index: 20;
+            box-shadow: 0 -2px 10px rgba(0, 169, 224, 0.5);
+        }
+
+        /* 7. OVERLAY */
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(30px);
+            z-index: 999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+
+        #overlay.visible {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        #overlay h1 {
+            font-size: 80px;
+            color: white;
+            margin-top: 40px;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+        }
+
+        #overlay i {
+            font-size: 150px;
+            color: var(--primary);
+            animation: pulse-scale 2s infinite;
+            filter: drop-shadow(0 0 50px var(--primary));
+        }
+
+        /* Utility for text colors */
+        .text-blue {
+            color: var(--income-color);
+        }
+
+        .text-red {
+            color: var(--expense-color);
+        }
+
+        .text-green {
+            color: #4ade80;
         }
     </style>
 </head>
+
 <body>
 
-    <iframe 
-        src="https://script.google.com/macros/s/AKfycbwGj1actsyjEmY1FYgd_EauAdTMZaVth-Xla_xWFHMH9wEB_9VI-Ve3Jpwgsy_m0ywArw/exec" 
-        title="Aplicación de Inventario de Google Script"
-        loading="lazy">
-    </iframe>
+    <!-- OVERLAY -->
+    <div id="overlay">
+        <i class="fa-solid fa-user-tie"></i>
+        <h1>Intervención Personal</h1>
+    </div>
+
+    <!-- NAVIGATION -->
+    <button class="nav-arrow nav-prev" onclick="changeSlide(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+    <button class="nav-arrow nav-next" onclick="changeSlide(1)"><i class="fa-solid fa-chevron-right"></i></button>
+
+    <div id="deck">
+        <div class="progress-bar" id="progressBar"></div>
+
+        <!-- Slide 1: Title -->
+        <div class="slide title-slide active" id="slide1">
+            <h1 style="font-size: 90px; margin-bottom: 10px;">Análisis Presupuestario</h1>
+            <h1 style="font-size: 60px; opacity: 0.8;">Banco del Pacífico S.A.</h1>
+            <div style="width: 100px; height: 6px; background: var(--primary); margin: 30px auto; border-radius: 3px;">
+            </div>
+            <p class="subtitle">Conozca el presupuesto de la empresa</p>
+        </div>
+
+        <!-- Slide 2: Context -->
+        <div class="slide" id="slide2">
+            <h2 class="slide-title">Contexto Institucional</h2>
+            <div class="two-column">
+                <div>
+                    <h3>¿Qué es una Empresa Pública?</h3>
+                    <p>En el contexto del Banco del Pacífico, aunque es una S.A., se considera "pública" por la
+                        propiedad de sus acciones.</p>
+                    <p>Una entidad pública es aquella cuyo capital y dirección dependen del Estado, y su fin principal
+                        es el servicio a la ciudadanía y el desarrollo nacional, más allá del lucro inmediato.</p>
+                </div>
+                <div class="image-wrapper">
+                    <img src="https://pbs.twimg.com/profile_images/1956062192677347337/xlfaWhMQ_400x400.jpg"
+                        alt="Edificio Corporativo Moderno">
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Mission & Vision -->
+        <div class="slide" id="slide3">
+            <h2 class="slide-title">Identidad Corporativa</h2>
+            <div class="two-column">
+                <div class="tile">
+                    <div class="icon"><i class="fa-solid fa-compass anim-spin"></i></div>
+                    <h3>Misión</h3>
+                    <p>Contribuir al desarrollo del país y del sistema financiero, con responsabilidad social, generando
+                        valor para sus clientes y accionistas.</p>
+                </div>
+                <div class="tile">
+                    <div class="icon"><i class="fa-solid fa-eye anim-blink"></i></div>
+                    <h3>Visión</h3>
+                    <p>Ser un banco eficiente y rentable, con un modelo de negocios sostenible y excelencia en el
+                        servicio, centrado en la generación de valor real.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Objectives -->
+        <div class="slide" id="slide4">
+            <h2 class="slide-title">Objetivos Estratégicos</h2>
+            <div class="tiled-content">
+                <div class="tile">
+                    <div class="icon"><i class="fa-solid fa-chart-line anim-chart"></i></div>
+                    <h3>Sostenibilidad</h3>
+                    <p>Maximizar rentabilidad y eficiencia para ser autosuficiente, sin depender de recursos estatales.
+                    </p>
+                </div>
+                <div class="tile">
+                    <div class="icon"><i class="fa-solid fa-industry anim-float"></i></div>
+                    <h3>Productividad</h3>
+                    <p>Apoyo a PYMES y sectores generadores de empleo, reduciendo la exposición en alto riesgo.</p>
+                </div>
+                <div class="tile">
+                    <div class="icon"><i class="fa-solid fa-hand-holding-heart anim-pulse"></i></div>
+                    <h3>Social</h3>
+                    <p>Financiar el desarrollo económico real y viable del país, alejándose del asistencialismo.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Why S.A.? -->
+        <div class="slide" id="slide5">
+            <h2 class="slide-title">Naturaleza Jurídica Híbrida</h2>
+            <div class="two-column">
+                <div>
+                    <ul style="list-style: none; padding: 0;">
+                        <li
+                            style="margin-bottom: 25px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 12px;">
+                            <i class="fa-solid fa-gavel anim-shake"
+                                style="color:var(--primary); margin-right:15px;"></i> <strong>Régimen Privado:</strong>
+                            Se rige
+                            por el Código de Comercio. Empleados bajo Código de Trabajo (no LOSEP).
+                        </li>
+                        <li
+                            style="margin-bottom: 25px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 12px;">
+                            <i class="fa-solid fa-share-nodes anim-pulse"
+                                style="color:var(--primary); margin-right:15px;"></i> <strong>Acciones vs.
+                                Presupuesto:</strong> Capital dividido en acciones, no es asignación presupuestaria.
+                        </li>
+                        <li
+                            style="margin-bottom: 25px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 12px;">
+                            <i class="fa-solid fa-building-columns anim-float"
+                                style="color:var(--primary); margin-right:15px;"></i> <strong>El Accionista:</strong>
+                            100%
+                            acciones de la CFN (Pública).
+                        </li>
+                    </ul>
+                </div>
+                <div class="image-wrapper">
+                    <img src="https://emprendimiento.ec/wp-content/uploads/Financiamiento/emprendimiento-ecuador-financiamiento-cfn-corporacion-financiaera-nacional.jpg"
+                        alt="Reunión Ejecutiva">
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Strategy -->
+        <div class="slide" id="slide6">
+            <h2 class="slide-title">Razones Estratégicas</h2>
+            <div class="two-column">
+                <div style="padding-right: 20px;">
+                    <div class="tile" style="margin-bottom: 30px; text-align: left;">
+                        <h3><i class="fa-solid fa-bolt anim-pulse"
+                                style="color: var(--primary); margin-right: 10px;"></i> Agilidad Competitiva</h3>
+                        <p>Al ser S.A., evita la lentitud de la contratación pública (SERCOP). Compite en igualdad de
+                            condiciones con Pichincha o Guayaquil.</p>
+                    </div>
+                    <div class="tile" style="text-align: left;">
+                        <h3><i class="fa-solid fa-handshake anim-shake"
+                                style="color: var(--primary); margin-right: 10px;"></i> Vendibilidad</h3>
+                        <p>Permite que las acciones puedan ser vendidas a inversores internacionales. Una entidad
+                            pública
+                            pura tendría que liquidarse.</p>
+                    </div>
+                </div>
+                <div class="image-wrapper">
+                    <img src="https://www.lumensoft.ec/wp-content/uploads/2023/08/SERCOP.jpg"
+                        alt="Estrategia Financiera">
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Concepts -->
+        <div class="slide" id="slide7">
+            <h2 class="slide-title">Conceptos Presupuestarios</h2>
+            <div class="two-column">
+                <div class="tile" style="border-top: 4px solid var(--income-color);">
+                    <h3 style="color: var(--income-color); font-size: 32px;">Ingresos Permanentes</h3>
+                    <p>Recursos constantes y predecibles del giro de negocio.</p>
+                    <hr style="border-color: var(--glass-border); margin: 20px 0;">
+                    <ul style="text-align: left; list-style: none; padding: 0;" id="conceptIncomeList">
+                        <!-- Populated by JS to include values -->
+                    </ul>
+                </div>
+                <div class="tile" style="border-top: 4px solid var(--expense-color);">
+                    <h3 style="color: var(--expense-color); font-size: 32px;">Egresos Permanentes</h3>
+                    <p>Gastos recurrentes para mantener la operatividad.</p>
+                    <hr style="border-color: var(--glass-border); margin: 20px 0;">
+                    <ul style="text-align: left; list-style: none; padding: 0;" id="conceptExpenseList">
+                        <!-- Populated by JS to include values -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Income Chart -->
+        <div class="slide" id="slide8">
+            <h2 class="slide-title">Distribución de Ingresos</h2>
+            <div class="chart-container" style="margin-top: 20px;">
+                <!-- Bars will be populated/updated by JS -->
+                <div class="bar">
+                    <div class="label">Intereses Cartera</div>
+                    <div class="bar-inner">
+                        <div class="bar-fill income" id="fill-inc-1" style="--target-width: 0%;"></div>
+                    </div>
+                    <div class="value" id="val-inc-1">$0M</div>
+                </div>
+                <div class="bar">
+                    <div class="label">Mant. Tarjetas</div>
+                    <div class="bar-inner">
+                        <div class="bar-fill income" id="fill-inc-2" style="--target-width: 0%;"></div>
+                    </div>
+                    <div class="value" id="val-inc-2">$0M</div>
+                </div>
+                <div class="bar">
+                    <div class="label">Comisiones Transf.</div>
+                    <div class="bar-inner">
+                        <div class="bar-fill income" id="fill-inc-3" style="--target-width: 0%;"></div>
+                    </div>
+                    <div class="value" id="val-inc-3">$0M</div>
+                </div>
+                <div class="bar">
+                    <div class="label">Depósitos Plazo</div>
+                    <div class="bar-inner">
+                        <div class="bar-fill income" id="fill-inc-4" style="--target-width: 0%;"></div>
+                    </div>
+                    <div class="value" id="val-inc-4">$0M</div>
+                </div>
+                <div class="bar">
+                    <div class="label">Apertura Cuentas</div>
+                    <div class="bar-inner">
+                        <div class="bar-fill income" id="fill-inc-5" style="--target-width: 0%;"></div>
+                    </div>
+                    <div class="value" id="val-inc-5">$0M</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Expenses Chart (NOW BAR CHART) -->
+        <div class="slide" id="slide9">
+            <h2 class="slide-title">Distribución de Egresos</h2>
+            <div class="chart-container" style="margin-top: 20px;">
+                <div class="bar">
+                    <div class="label">Int. Depositantes</div>
+                    <div class="bar-inner">
+                        <div class="bar-fill expense" id="fill-exp-1" style="--target-width: 0%;"></div>
+                    </div>
+                    <div class="value" id="val-exp-1">$0M</div>
+                </div>
+                <div class="bar">
+                    <div class="label">Gastos Admin.</div>
+                    <div class="bar-inner">
+                        <div class="bar-fill expense" id="fill-exp-2" style="--target-width: 0%;"></div>
+                    </div>
+                    <div class="value" id="val-exp-2">$0M</div>
+                </div>
+                <div class="bar">
+                    <div class="label">Sueldos</div>
+                    <div class="bar-inner">
+                        <div class="bar-fill expense" id="fill-exp-3" style="--target-width: 0%;"></div>
+                    </div>
+                    <div class="value" id="val-exp-3">$0M</div>
+                </div>
+                <div class="bar">
+                    <div class="label">Infraestructura</div>
+                    <div class="bar-inner">
+                        <div class="bar-fill expense" id="fill-exp-4" style="--target-width: 0%;"></div>
+                    </div>
+                    <div class="value" id="val-exp-4">$0M</div>
+                </div>
+                <div class="bar">
+                    <div class="label">Sist. Tecnológicos</div>
+                    <div class="bar-inner">
+                        <div class="bar-fill expense" id="fill-exp-5" style="--target-width: 0%;"></div>
+                    </div>
+                    <div class="value" id="val-exp-5">$0M</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Balance -->
+        <div class="slide" id="slide10">
+            <h2 class="slide-title">Balance Presupuestario</h2>
+            <div
+                style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px;">
+                <table class="balance-table">
+                    <tr>
+                        <td><i class="fa-solid fa-plus-circle text-blue"></i> Ingresos Totales</td>
+                        <td id="balanceTotalIncome" class="text-blue">$0</td>
+                    </tr>
+                    <tr>
+                        <td><i class="fa-solid fa-minus-circle text-red"></i> Egresos Totales</td>
+                        <td id="balanceTotalExpenses" class="text-red">$0</td>
+                    </tr>
+                </table>
+
+                <div class="highlight-number">
+                    <div class="lbl">RESULTADO (SUPERÁVIT)</div>
+                    <div class="val" id="balanceResult">$0</div>
+                    <div style="color: #4ade80; font-weight: bold; margin-top: 10px; font-size: 24px;">
+                        <i class="fa-solid fa-arrow-trend-up"></i> Situación Saludable
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 11: Recommendations -->
+        <div class="slide" id="slide11">
+            <h2 class="slide-title">Recomendaciones Estratégicas</h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                <div class="tile">
+                    <div class="icon"><i class="fa-solid fa-mobile-screen anim-shake"></i></div>
+                    <h3>Digitalización</h3>
+                    <p style="font-size: 16px;">Migración a canales digitales para reducir gastos operativos y mejorar
+                        eficiencia.</p>
+                </div>
+                <div class="tile">
+                    <div class="icon"><i class="fa-solid fa-leaf anim-float"></i></div>
+                    <h3>Sostenibilidad</h3>
+                    <p style="font-size: 16px;">Potenciar "Créditos Verdes" y apoyo a PYMES para atraer fondos
+                        internacionales.</p>
+                </div>
+                <div class="tile">
+                    <div class="icon"><i class="fa-solid fa-shield-halved anim-pulse"></i></div>
+                    <h3>Riesgos</h3>
+                    <p style="font-size: 16px;">Colocar liquidez en sectores productivos de bajo riesgo.</p>
+                </div>
+                <div class="tile">
+                    <div class="icon"><i class="fa-solid fa-hand-holding-dollar anim-chart"></i></div>
+                    <h3>Ingresos Servicios</h3>
+                    <p style="font-size: 16px;">Nuevos productos transaccionales para no depender solo del crédito.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 12: End -->
+        <div class="slide" id="slide12" style="text-align: center;">
+            <h1 style="font-size: 80px; margin-bottom: 20px;">¿Preguntas?</h1>
+            <p class="subtitle">Gracias por su atención</p>
+            <div class="image-wrapper" style="width: 600px; height: 350px; margin: 50px auto;">
+                <img src="https://ekosnegocios.com/image/posts/header/12116.jpg" alt="Banco Final">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- DATA & LOGIC ---
+        let incomeData = [];
+        let expenseData = [];
+        let totalIncome = 0;
+        let totalExpenses = 0;
+
+        function formatMoney(amount) {
+            return '$' + amount.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + 'M';
+        }
+
+        function generateRandom(min, max) {
+            return Math.floor(Math.random() * (max - min + 1) + min) + Math.random();
+        }
+
+        function initData() {
+            // 1. Define Income Items
+            incomeData = [
+                { label: "Intereses Cartera", value: 360.5, id: "inc-1" },
+                { label: "Mant. Tarjetas", value: 78.5, id: "inc-2" },
+                { label: "Comisiones Transf.", value: 26.6, id: "inc-3" },
+                { label: "Depósitos Plazo", value: generateRandom(15, 60), id: "inc-4" },
+                { label: "Apertura Cuentas", value: generateRandom(5, 25), id: "inc-5" }
+            ];
+
+            // 2. Define Expense Items
+            expenseData = [
+                { label: "Int. Depositantes", value: 201.2, id: "exp-1" },
+                { label: "Gastos Admin.", value: 65.4, id: "exp-2" },
+                { label: "Sueldos", value: 78.7, id: "exp-3" },
+                { label: "Infraestructura", value: generateRandom(20, 50), id: "exp-4" },
+                { label: "Sist. Tecnológicos", value: generateRandom(30, 80), id: "exp-5" }
+            ];
+
+            // 3. Calculate Totals
+            totalIncome = incomeData.reduce((sum, item) => sum + item.value, 0);
+            totalExpenses = expenseData.reduce((sum, item) => sum + item.value, 0);
+
+            renderCharts();
+            updateBalance();
+            updateConceptLists();
+        }
+
+        function renderCharts() {
+            // --- RENDER INCOME BARS ---
+            const maxIncome = Math.max(...incomeData.map(d => d.value));
+            incomeData.forEach(item => {
+                const fillEl = document.getElementById('fill-' + item.id);
+                const valEl = document.getElementById('val-' + item.id);
+                if (fillEl && valEl) {
+                    const widthPct = (item.value / maxIncome) * 100;
+                    fillEl.style.setProperty('--target-width', `${widthPct}%`);
+                    valEl.textContent = formatMoney(item.value);
+                }
+            });
+
+            // --- RENDER EXPENSE BARS ---
+            const maxExpense = Math.max(...expenseData.map(d => d.value));
+            expenseData.forEach(item => {
+                const fillEl = document.getElementById('fill-' + item.id);
+                const valEl = document.getElementById('val-' + item.id);
+                if (fillEl && valEl) {
+                    const widthPct = (item.value / maxExpense) * 100;
+                    fillEl.style.setProperty('--target-width', `${widthPct}%`);
+                    valEl.textContent = formatMoney(item.value);
+                }
+            });
+        }
+
+        function updateConceptLists() {
+            // Slide 7 Lists
+            const incList = document.getElementById('conceptIncomeList');
+            incList.innerHTML = '';
+            incomeData.forEach(item => {
+                incList.innerHTML += `<li><i class="fa-solid fa-check anim-pulse" style="color: var(--income-color); margin-right: 10px;"></i> ${item.label} <strong>(${formatMoney(item.value)})</strong></li>`;
+            });
+
+            const expList = document.getElementById('conceptExpenseList');
+            expList.innerHTML = '';
+            expenseData.forEach(item => {
+                expList.innerHTML += `<li><i class="fa-solid fa-arrow-right anim-float" style="color: var(--expense-color); margin-right: 10px;"></i> ${item.label} <strong>(${formatMoney(item.value)})</strong></li>`;
+            });
+        }
+
+        function updateBalance() {
+            document.getElementById('balanceTotalIncome').textContent = formatMoney(totalIncome);
+            document.getElementById('balanceTotalExpenses').textContent = formatMoney(totalExpenses);
+
+            const result = totalIncome - totalExpenses;
+            document.getElementById('balanceResult').textContent = formatMoney(result);
+        }
+
+        // --- SLIDESHOW LOGIC ---
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const progressBar = document.getElementById('progressBar');
+
+        function updateProgress() {
+            const progress = ((currentSlide + 1) / slides.length) * 100;
+            progressBar.style.width = `${progress}%`;
+        }
+
+        function changeSlide(direction) {
+            // ANIMATE ARROW
+            const btn = direction === 1 ? document.querySelector('.nav-next') : document.querySelector('.nav-prev');
+            if (btn) {
+                btn.classList.remove('clicked');
+                void btn.offsetWidth; // Trigger reflow
+                btn.classList.add('clicked');
+            }
+
+            const activeSlide = slides[currentSlide];
+            activeSlide.classList.remove('active');
+
+            currentSlide += direction;
+
+            if (currentSlide >= slides.length) currentSlide = 0;
+            if (currentSlide < 0) currentSlide = slides.length - 1;
+
+            const nextSlide = slides[currentSlide];
+            nextSlide.classList.add('active');
+
+            updateProgress();
+        }
+
+        // --- OVERLAY LOGIC ---
+        const overlay = document.getElementById('overlay');
+        let overlayVisible = false;
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Tab') {
+                e.preventDefault();
+                overlayVisible = !overlayVisible;
+                if (overlayVisible) {
+                    overlay.classList.add('visible');
+                } else {
+                    overlay.classList.remove('visible');
+                }
+            } else if (!overlayVisible) {
+                // Only navigate if overlay is NOT visible
+                if (e.key === 'ArrowRight' || e.key === ' ') {
+                    changeSlide(1);
+                } else if (e.key === 'ArrowLeft') {
+                    changeSlide(-1);
+                }
+            }
+        });
+
+        // Init
+        initData();
+        updateProgress();
+    </script>
 
 </body>
+
 </html>
